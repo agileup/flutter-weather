@@ -14,10 +14,10 @@ class SimpleBlocDelegate extends BlocDelegate {
     print(transition);
   }
 
-  @override
-  void onError(Object error, StackTrace stacktrace) {
-    print(error);
-  }
+  // @override
+  // void onError(Object error, StackTrace stacktrace) {
+  //   print(error);
+  // }
 }
 
 void main() {
@@ -31,7 +31,7 @@ void main() {
   runApp(App(weatherRepository: weatherRepository));
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   final WeatherRepository weatherRepository;
 
   App({Key key, @required this.weatherRepository})
@@ -39,15 +39,28 @@ class App extends StatelessWidget {
     , super(key: key);
   
   @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  ThemeBloc _themeBloc = ThemeBloc();
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Weather',
-      // theme: ThemeData(
-      //   primarySwatch: Colors.blue,
-      // ),
-      home: Weather(
-        weatherRepository: weatherRepository,
-      )
+    return BlocProvider(
+      bloc: _themeBloc,
+      child: BlocBuilder(
+        bloc: _themeBloc,
+        builder: (_, ThemeState themeState) {
+          return MaterialApp(
+            title: 'Flutter Weather',
+            theme: themeState.theme,
+            home: Weather(
+              weatherRepository: widget.weatherRepository,
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -65,12 +78,12 @@ class Weather extends StatefulWidget {
 
 class _WeatherState extends State<Weather> {
   WeatherBloc _weatherBloc;
-  Completer<void> _refreshCompleter;
+  // Completer<void> _refreshCompleter;
 
   @override
   void initState() {
     super.initState();
-    _refreshCompleter = Completer<void>();
+    // _refreshCompleter = Completer<void>();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
   }
 
@@ -80,6 +93,17 @@ class _WeatherState extends State<Weather> {
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () async {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Settings(),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
@@ -108,38 +132,48 @@ class _WeatherState extends State<Weather> {
             }
             if (state is WeatherLoaded) {
               final weather = state.weather;
+              final themeBloc = BlocProvider.of<ThemeBloc>(context);
+              themeBloc.dispatch(WeatherChanged(condition: weather.condition));
 
-              _refreshCompleter?.complete();
-              _refreshCompleter = Completer();
+              // _refreshCompleter?.complete();
+              // _refreshCompleter = Completer();
 
-              return RefreshIndicator(
-                onRefresh: () {
-                  _weatherBloc.dispatch(
-                    RefreshWeather(city: state.weather.location),
-                  );
-                  return _refreshCompleter.future;
-                },
-                child: ListView(
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.only(top: 100.0),
-                      child: Center(
-                        child: Location(location: weather.location),
-                      ),
-                    ),
-                    Center(
-                      child: LastUpdated(dateTime: weather.lastUpdated),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 50.0),
-                      child: Center(
-                        child: CombinedWeatherTemperature(
-                          weather: weather,
+              // return RefreshIndicator(
+              //   onRefresh: () {
+              //     _weatherBloc.dispatch(
+              //       RefreshWeather(city: state.weather.location),
+              //     );
+              //     return _refreshCompleter.future;
+              //   },
+              // );
+              return BlocBuilder(
+                bloc: themeBloc,
+                builder: (_, ThemeState themeState) {
+                  return GradientContainer(
+                    color: themeState.color,
+                    child: ListView(
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(top: 100.0),
+                          child: Center(
+                            child: Location(location: weather.location),
+                          ),
                         ),
-                      ),
+                        Center(
+                          child: LastUpdated(dateTime: weather.lastUpdated),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 50.0),
+                          child: Center(
+                            child: CombinedWeatherTemperature(
+                              weather: weather,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             }
             if (state is WeatherError) {

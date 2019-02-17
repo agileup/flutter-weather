@@ -4,3 +4,4 @@ export './combined_weather_temparature.dart';
 export './weather_conditions.dart';
 export './temperature.dart';
 export './city_selection.dart';
+export './gradient_container.dart';
