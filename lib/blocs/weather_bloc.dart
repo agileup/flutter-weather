@@ -19,6 +19,14 @@ class FetchWeather extends WeatherEvent {
     , super([city]);
 }
 
+class RefreshWeather extends WeatherEvent {
+  final String city;
+
+  RefreshWeather({@required this.city})
+    : assert(city != null)
+    , super([city]);
+}
+
 abstract class WeatherState extends Equatable {
   WeatherState([List props = const []]) : super(props);
 }
@@ -58,6 +66,15 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
         yield WeatherLoaded(weather: weather);
       } catch (_) {
         yield WeatherError();
+      }
+    }
+
+    if (event is RefreshWeather) {
+      try {
+        final Weather weather = await weatherRepository.getWeather(event.city);
+        yield WeatherLoaded(weather: weather);
+      } catch (_) {
+        yield currentState;
       }
     }
   }

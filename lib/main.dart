@@ -13,17 +13,21 @@ class SimpleBlocDelegate extends BlocDelegate {
   void onTransition(Transition transition) {
     print(transition);
   }
+
+  @override
+  void onError(Object error, StackTrace stacktrace) {
+    print(error);
+  }
 }
 
 void main() {
-  BlocSupervisor().delegate = SimpleBlocDelegate();
-
   final WeatherRepository weatherRepository = WeatherRepository(
     weatherApiClient: WeatherApiClient(
       httpClient: http.Client(),
     ),
   );
 
+  BlocSupervisor().delegate = SimpleBlocDelegate();
   runApp(App(weatherRepository: weatherRepository));
 }
 
@@ -61,10 +65,12 @@ class Weather extends StatefulWidget {
 
 class _WeatherState extends State<Weather> {
   WeatherBloc _weatherBloc;
+  Completer<void> _refreshCompleter;
 
   @override
   void initState() {
     super.initState();
+    _refreshCompleter = Completer<void>();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
   }
 
@@ -103,26 +109,37 @@ class _WeatherState extends State<Weather> {
             if (state is WeatherLoaded) {
               final weather = state.weather;
 
-              return ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 100.0),
-                    child: Center(
-                      child: Location(location: weather.location),
-                    ),
-                  ),
-                  Center(
-                    child: LastUpdated(dateTime: weather.lastUpdated),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 50.0),
-                    child: Center(
-                      child: CombinedWeatherTemperature(
-                        weather: weather,
+              _refreshCompleter?.complete();
+              _refreshCompleter = Completer();
+
+              return RefreshIndicator(
+                onRefresh: () {
+                  _weatherBloc.dispatch(
+                    RefreshWeather(city: state.weather.location),
+                  );
+                  return _refreshCompleter.future;
+                },
+                child: ListView(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 100.0),
+                      child: Center(
+                        child: Location(location: weather.location),
                       ),
                     ),
-                  ),
-                ],
+                    Center(
+                      child: LastUpdated(dateTime: weather.lastUpdated),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 50.0),
+                      child: Center(
+                        child: CombinedWeatherTemperature(
+                          weather: weather,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               );
             }
             if (state is WeatherError) {
