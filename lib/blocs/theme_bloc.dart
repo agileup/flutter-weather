@@ -16,8 +16,8 @@ class WeatherChanged extends ThemeEvent {
   final WeatherCondition condition;
 
   WeatherChanged({@required this.condition})
-    : assert(condition != null)
-    , super([condition]);
+      : assert(condition != null),
+        super([condition]);
 }
 
 class ThemeState extends Equatable {
@@ -25,23 +25,21 @@ class ThemeState extends Equatable {
   final MaterialColor color;
 
   ThemeState({@required this.theme, @required this.color})
-    : assert(theme != null)
-    , assert(color != null)
-    , super([theme, color]);
+      : assert(theme != null),
+        assert(color != null),
+        super([theme, color]);
 }
 
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   @override
   ThemeState get initialState => ThemeState(
-    theme: ThemeData.light(),
-    color: Colors.lightBlue,
-  );
+        theme: ThemeData.light(),
+        color: Colors.lightBlue,
+      );
 
   @override
   Stream<ThemeState> mapEventToState(
-    ThemeState currentState,
-    ThemeEvent event
-  ) async* {
+      ThemeState currentState, ThemeEvent event) async* {
     if (event is WeatherChanged) {
       yield _mapWeatherConditionToThemeData(event.condition);
     }

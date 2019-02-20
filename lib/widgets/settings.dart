@@ -20,11 +20,12 @@ class Settings extends StatelessWidget {
               return ListTile(
                 title: Text('Temperature Units'),
                 isThreeLine: true,
-                subtitle: Text('Use metric measurements for temperature units.'),
+                subtitle:
+                    Text('Use metric measurements for temperature units.'),
                 trailing: Switch(
                   value: state.temperatureUnits == TemperatureUnits.celsius,
                   onChanged: (_) =>
-                    settingsBloc.dispatch(TemperatureUnitsToggled()),
+                      settingsBloc.dispatch(TemperatureUnitsToggled()),
                 ),
               );
             },

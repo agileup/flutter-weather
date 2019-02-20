@@ -15,16 +15,16 @@ class FetchWeather extends WeatherEvent {
   final String city;
 
   FetchWeather({@required this.city})
-    : assert(city != null)
-    , super([city]);
+      : assert(city != null),
+        super([city]);
 }
 
 class RefreshWeather extends WeatherEvent {
   final String city;
 
   RefreshWeather({@required this.city})
-    : assert(city != null)
-    , super([city]);
+      : assert(city != null),
+        super([city]);
 }
 
 abstract class WeatherState extends Equatable {
@@ -39,8 +39,8 @@ class WeatherLoaded extends WeatherState {
   final Weather weather;
 
   WeatherLoaded({@required this.weather})
-    : assert(weather != null)
-    , super([weather]);
+      : assert(weather != null),
+        super([weather]);
 }
 
 class WeatherError extends WeatherState {}
@@ -49,16 +49,14 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   final WeatherRepository weatherRepository;
 
   WeatherBloc({@required this.weatherRepository})
-    : assert(weatherRepository != null);
-  
+      : assert(weatherRepository != null);
+
   @override
   WeatherState get initialState => WeatherEmpty();
 
   @override
   Stream<WeatherState> mapEventToState(
-    WeatherState currentState,
-    WeatherEvent event
-  ) async* {
+      WeatherState currentState, WeatherEvent event) async* {
     if (event is FetchWeather) {
       yield WeatherLoading();
       try {

@@ -15,26 +15,24 @@ class SettingsState extends Equatable {
   final TemperatureUnits temperatureUnits;
 
   SettingsState({@required this.temperatureUnits})
-    : assert(temperatureUnits != null)
-    , super([temperatureUnits]);
+      : assert(temperatureUnits != null),
+        super([temperatureUnits]);
 }
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   @override
-  SettingsState get initialState => SettingsState(
-    temperatureUnits: TemperatureUnits.celsius
-  );
+  SettingsState get initialState =>
+      SettingsState(temperatureUnits: TemperatureUnits.celsius);
 
   @override
   Stream<SettingsState> mapEventToState(
-    SettingsState currentState,
-    SettingsEvent event
-  ) async* {
+      SettingsState currentState, SettingsEvent event) async* {
     if (event is TemperatureUnitsToggled) {
       yield SettingsState(
-        temperatureUnits: currentState.temperatureUnits == TemperatureUnits.celsius
-          ? TemperatureUnits.fahrenheit
-          : TemperatureUnits.celsius,
+        temperatureUnits:
+            currentState.temperatureUnits == TemperatureUnits.celsius
+                ? TemperatureUnits.fahrenheit
+                : TemperatureUnits.celsius,
       );
     }
   }

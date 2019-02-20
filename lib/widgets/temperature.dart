@@ -58,5 +58,5 @@ class Temperature extends StatelessWidget {
   int _toFahrenheit(double celsius) => ((celsius * 9 / 5) + 32).round();
 
   int _formattedTemperature(double t) =>
-    units == TemperatureUnits.fahrenheit ? _toFahrenheit(t) : t.round();
+      units == TemperatureUnits.fahrenheit ? _toFahrenheit(t) : t.round();
 }

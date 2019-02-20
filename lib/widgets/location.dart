@@ -6,8 +6,8 @@ class Location extends StatelessWidget {
   final String location;
 
   Location({Key key, @required this.location})
-    : assert(location != null)
-    , super(key: key);
+      : assert(location != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {

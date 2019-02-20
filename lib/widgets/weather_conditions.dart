@@ -8,8 +8,8 @@ class WeatherConditions extends StatelessWidget {
   final WeatherCondition condition;
 
   WeatherConditions({Key key, @required this.condition})
-    : assert(condition != null)
-    , super(key: key);
+      : assert(condition != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) => _mapConditionToImage(condition);

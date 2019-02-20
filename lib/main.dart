@@ -14,10 +14,10 @@ class SimpleBlocDelegate extends BlocDelegate {
     print(transition);
   }
 
-  // @override
-  // void onError(Object error, StackTrace stacktrace) {
-  //   print(error);
-  // }
+  @override
+  void onError(Object error, StackTrace stacktrace) {
+    print(error);
+  }
 }
 
 void main() {
@@ -35,9 +35,9 @@ class App extends StatefulWidget {
   final WeatherRepository weatherRepository;
 
   App({Key key, @required this.weatherRepository})
-    : assert(weatherRepository != null)
-    , super(key: key);
-  
+      : assert(weatherRepository != null),
+        super(key: key);
+
   @override
   State<App> createState() => _AppState();
 }
@@ -53,7 +53,7 @@ class _AppState extends State<App> {
       child: BlocProvider(
         bloc: _settingsBloc,
         child: BlocBuilder(
-        bloc: _themeBloc,
+          bloc: _themeBloc,
           builder: (_, ThemeState themeState) {
             return MaterialApp(
               title: 'Flutter Weather',

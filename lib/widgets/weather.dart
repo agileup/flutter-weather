@@ -12,8 +12,8 @@ class Weather extends StatefulWidget {
   final WeatherRepository weatherRepository;
 
   Weather({Key key, @required this.weatherRepository})
-    : assert(weatherRepository != null)
-    , super(key: key);
+      : assert(weatherRepository != null),
+        super(key: key);
 
   @override
   State<Weather> createState() => _WeatherState();
